@@ -1,5 +1,4 @@
-# Video-Search-For-YouTube
-Search the textual content of any YouTube video.
+# Search in subtitles on Youtube
+Search the subtitles of YouTube videos and jump to the moment they are shown. Imagine Ctrl+F, but for subtitles.
 
-[![Install](https://developer.chrome.com/webstore/images/ChromeWebStore_BadgeWBorder_v2_340x96.png)
-](https://chrome.google.com/webstore/detail/video-search-for-youtube/habdalaejnjehgaadeignhbmllkdngpf)
+You can get it from its [Firefox Addons page](https://addons.mozilla.org/en-US/firefox/addon/search-in-subtitles-on-youtube/).

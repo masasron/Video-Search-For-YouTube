@@ -3,15 +3,15 @@ function SearchInput(props) {
 
     let SUGGESTIONS_INDEX = -1;
 
-    function renderAutoComplateItem(item) {
-        return li({ onClick: () => handleAutoComplateItemClick(item) }, [
+    function renderAutoCompleteItem(item) {
+        return li({ onClick: () => handleAutoCompleteItemClick(item) }, [
             strong({ innerText: item.word + " " }),
             span({ innerText: item.right.join(" ") }),
             small({ innerText: Utilities.fancyTimeFormat(item.time / 1000) })
         ])
     }
 
-    function handleAutoComplateItemClick(item) {
+    function handleAutoCompleteItemClick(item) {
         Utilities.postMessage({
             action: "SKIP",
             payload: item.time / 1000
@@ -19,11 +19,13 @@ function SearchInput(props) {
 
         $refs.search_input.value = "";
         $refs.dropdown.innerHTML = "";
+        handleCloseButtonClicked()
     }
 
     function keyboardShortcuts(event) {
         let result = false;
         switch (event.keyCode) {
+            // Enter
             case 13:
                 if (SUGGESTIONS_INDEX > -1) {
                     $refs.dropdown_ul.children[SUGGESTIONS_INDEX].click();
@@ -72,7 +74,11 @@ function SearchInput(props) {
         }
 
         $refs.dropdown.appendChild(DropDownList({
+<<<<<<< HEAD
             render: renderAutoComplateItem,
+=======
+            render: renderAutoCompleteItem,
+>>>>>>> 0d76166... Initial commit
             items: Utilities.search(value, props.TIMED_TEXT_LIST).slice(0, 8)
         }));
     }

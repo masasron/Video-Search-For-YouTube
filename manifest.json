@@ -1,29 +1,22 @@
 {
-    "name": "Video Search for YouTube",
-    "description": "Search the textual content of any YouTube video.",
-    "version": "1.0.0",
-    "manifest_version": 2,
-    "web_accessible_resources": [
-        "src/app/*",
-        "src/app/libraries/*.js",
-        "src/app/components/*.js"
-    ],
-    "content_scripts": [
-        {
-            "matches": [
-                "*://*.youtube.com/*"
-            ],
-            "js": [
-                "src/content-scripts/youtube.js"
-            ]
-        }
-    ],
-    "icons": {
-        "16": "./icons/16x16.png",
-        "48": "./icons/48x48.png",
-        "128": "./icons/128x128.png"
-    },
-    "permissions": [
-        "*://*.youtube.com/*"
-    ]
+   "content_scripts": [ {
+      "js": [ "src/content-scripts/youtube.js" ],
+      "matches": [ "*://*.youtube.com/*" ]
+   } ],
+   "description": "Search the subtitles of YouTube videos and jump to the moment they are shown.",
+   "icons": {
+      "128": "./icons/128x128.png",
+      "16": "./icons/16x16.png",
+      "48": "./icons/48x48.png"
+   },
+   "manifest_version": 2,
+   "name": "Search in subtitles on YouTube",
+   "permissions": [ "*://*.youtube.com/*" ],
+   "version": "1.0.2.1",
+   "web_accessible_resources": [ "src/app/*", "src/app/libraries/*.js", "src/app/components/*.js" ],
+   "browser_specific_settings": {
+      "gecko": {
+        "id": "youtube_subtitle_search@foo"
+      }
+    }
 }

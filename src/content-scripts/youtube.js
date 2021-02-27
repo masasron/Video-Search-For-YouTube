@@ -4,7 +4,7 @@
         SEARCH_IFRAME: null,
         YOUTUBE_PLAYER: null,
         MOUSE_OVER_FRAME: null,
-        IFRAME_ID: "SKIPPER_FRAME",
+        IFRAME_ID: "YTSEARCH_IFRAME",
         SEARCH_BOX_VISIBILITY: false,
         YOUTUBE_RIGHT_CONTROLS: null,
         YOUTUBE_PLAYER_SEARCH_BUTTON: null,
@@ -78,9 +78,11 @@
 
     const logic = {
         handleMessage(event) {
-            if (event.origin !== "chrome-extension://" + chrome.runtime.id) {
+            let extension_url = browser.runtime.getURL('').slice(0, -1)
+            if (event.origin !== extension_url) {
                 return;
             }
+
             const data = event.data;
             switch (data.action) {
                 case "SEARCH.UPDATE_HEIGHT":
@@ -106,33 +108,26 @@
         }
     };
 
-    function main(url) {
-        state.SEARCH_BOX_VISIBILITY = false;
-
-        if (!state.SEARCH_IFRAME) {
-            state.SEARCH_IFRAME = render.iframe();
-        }
-
-        if (!helpers.isVideoURL(url)) {
-            state.SEARCH_IFRAME.style.display = "none";
+    function setup(url) {
+        if (!helpers.isVideoURL(url) || document.getElementById(state.IFRAME_ID)) {
             return;
         }
-
+        
         state.YOUTUBE_PLAYER = document.querySelector("#container .html5-video-player");
-        state.SEARCH_IFRAME.src = "chrome-extension://" + chrome.runtime.id + "/src/app/index.html?url=" + encodeURIComponent(url);
+        if (state.YOUTUBE_PLAYER) {
+            state.SEARCH_IFRAME = state.SEARCH_IFRAME || render.iframe();
+            state.SEARCH_IFRAME.src = browser.runtime.getURL('src/app/index.html') + '?url=' + encodeURIComponent(url);
+            state.YOUTUBE_PLAYER.appendChild(state.SEARCH_IFRAME);
 
-        if (!document.getElementById(state.IFRAME_ID)) {
-            if (state.YOUTUBE_PLAYER) {
-                state.YOUTUBE_PLAYER.appendChild(state.SEARCH_IFRAME);
-                state.YOUTUBE_PLAYER_SEARCH_BUTTON = render.searchButton();
-
-                state.YOUTUBE_RIGHT_CONTROLS = state.YOUTUBE_PLAYER.querySelector(".ytp-right-controls");
-                state.YOUTUBE_RIGHT_CONTROLS.insertBefore(state.YOUTUBE_PLAYER_SEARCH_BUTTON, state.YOUTUBE_RIGHT_CONTROLS.firstChild);
-            }
+            state.YOUTUBE_PLAYER_SEARCH_BUTTON = render.searchButton();
+            state.YOUTUBE_RIGHT_CONTROLS = state.YOUTUBE_PLAYER.querySelector(".ytp-right-controls");
+            state.YOUTUBE_RIGHT_CONTROLS.insertBefore(state.YOUTUBE_PLAYER_SEARCH_BUTTON, state.YOUTUBE_RIGHT_CONTROLS.firstChild);
+        } else {
+            setTimeout(() => setup(window.location.href), 2000)
         }
     }
 
-    helpers.onUrlChange(main);
-    setInterval(render.byState, 1);
+    helpers.onUrlChange(setup);
+    setInterval(render.byState, 10);
     window.addEventListener("message", logic.handleMessage);
 })();

@@ -6,7 +6,6 @@ async function App() {
     }
 
     const TIMED_TEXT_LIST = await Utilities.getSubtitles(url);
-
     if (TIMED_TEXT_LIST.length === 0) {
         return;
     }
