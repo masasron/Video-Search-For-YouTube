@@ -74,12 +74,8 @@ function SearchInput(props) {
         }
 
         $refs.dropdown.appendChild(DropDownList({
-<<<<<<< HEAD
-            render: renderAutoComplateItem,
-=======
             render: renderAutoCompleteItem,
->>>>>>> 0d76166... Initial commit
-            items: Utilities.search(value, props.TIMED_TEXT_LIST).slice(0, 8)
+            items: Utilities.searchSubtitles(value, props.SUBTITLES).slice(0, 8)
         }));
     }
 

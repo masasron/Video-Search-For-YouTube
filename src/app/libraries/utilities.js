@@ -10,39 +10,32 @@ window.Utilities = {
             return null;
         }
     },
-    search(value, timedTextList) {
+    searchSubtitles(value, timedTextList) {
         var results = [];
-        var words = value.toLowerCase().replace(/[^a-z0-9\s]/gim, '').trim().split(' ').filter(word => word);
-
+        var words = value.toLowerCase().replace(/[^a-z0-9\s]/gim, '').trim().split(' ').filter((word) => word);
+    
         if (words.length === 0) {
             return [];
         }
-
-        for (let i = 0; i < timedTextList.length; i++) {
-            var matches = [];
-            for (let j = 0; j < words.length; j++) {
-                if (i + j >= timedTextList.length) {
-                    continue;
-                }
-                let word = words[j];
-                if (timedTextList[i + j].word.indexOf(word) === 0) {
-                    matches.push({
-                        word: timedTextList[i + j].word,
-                        time: timedTextList[i + j].time,
-                        right: timedTextList.slice(i + j + 1, i + j + 4).map(_ => _.word)
-                    });
-                }
-            }
-            if (matches.length === words.length) {
+    
+        for (let firstWordIdx = 0; firstWordIdx < timedTextList.length; firstWordIdx++) {
+            if (Utilities._isMatch(timedTextList, firstWordIdx, words)) {
                 results.push({
-                    time: matches[0].time,
-                    word: matches.map(_ => _.word).join(" "),
-                    right: matches[matches.length - 1].right
+                    time: timedTextList[firstWordIdx].time,
+                    word: timedTextList[firstWordIdx].word,
+                    right: timedTextList.slice(firstWordIdx + 1, firstWordIdx + 4).map((_) => _.word)
                 });
             }
         }
-
+    
         return results;
+    },
+    _isMatch(timedTextList, firstWordIdx, words) {
+        return Array.from(timedTextList
+            .slice(firstWordIdx, firstWordIdx + words.length)
+            .entries())
+            .map(([ idx, timedText ]) => timedText.word.indexOf(words[idx]) === 0)
+            .every(Boolean);
     },
     fancyTimeFormat(time) {
         let hrs = ~~(time / 3600);
@@ -76,6 +69,9 @@ window.Utilities = {
     },
     async  _downloadTimedText(url) {
         let timedtextURL = await Utilities._getTimedTextUrl(url);
+
+        // console.log('timedtextUrl')
+        // console.log(timedtextURL)
 
         if (!timedtextURL) {
             return "";
@@ -115,18 +111,4 @@ window.Utilities = {
         });
         return jsonTimedText;
     },
-    searchSubtitles(query, subtitles) {
-        let results = [];
-        for (let i = 0; i < subtitles.length; i++) {
-            let subtitle = subtitles[i];
-            if (subtitle.text.match(query)) {
-                results.push({
-                    subtitle,
-                    left: subtitles.slice(i - 5, i - 1),
-                    right: subtitles.slice(i + 1, i + 5)
-                });
-            }
-        }
-        return results;
-    }
 };
