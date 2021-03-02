@@ -43,7 +43,7 @@
         return el;
     }
 
-    const tags = ["strong", "ul", "li", "h1", "h2", "h3", "h4", "h5", "h6", "div", "input", "textarea", "span", "label", "small", "button", "img"];
+    const tags = ["strong", "ul", "li", "h1", "h2", "h3", "h4", "h5", "h6", "div", "input", "textarea", "span", "label", "small", "button", "img", "select"];
 
     tags.forEach(tag => {
         bind[tag] = (props, children) => element(tag, props, children);

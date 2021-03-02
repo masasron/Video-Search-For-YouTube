@@ -79,6 +79,17 @@ function SearchInput(props) {
         }));
     }
 
+    function handleSubtitleOptionChanged(event) {       
+        new_value = event.target.value
+        let subtitleIdx = 0
+        for(let i=0; i<props.CAPTION_TRACKS.length; i++){
+            if(props.CAPTION_TRACKS[i].name.simpleText == new_value){
+                subtitleIdx = i
+            }
+        }
+        Utilities.getSubtitles(props.CAPTION_TRACKS, subtitleIdx).then(d => props.SUBTITLES = d)
+    }
+
     function handleCloseButtonClicked() {
         Utilities.postMessage({ action: "SEARCH.CLOSE" });
     }
@@ -86,6 +97,10 @@ function SearchInput(props) {
     return [
         input({ onKeyUp: handleInput, ref: "search_input", spellcheck: "false", placeholder: "Search in video...", autocomplete: "off" }),
         CloseButton({ onClick: handleCloseButtonClicked }),
-        div({ className: "autocomplate", ref: "dropdown" })
+        div({ className: "autocomplate", ref: "dropdown" }),
+        SubtitleSelect({
+            items: props.CAPTION_TRACKS.map(x => x.name.simpleText),
+            onChange: handleSubtitleOptionChanged,
+        })
     ];
 }

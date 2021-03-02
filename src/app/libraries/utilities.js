@@ -52,26 +52,12 @@ window.Utilities = {
     postMessage(message) {
         window.parent.postMessage(message, "https://www.youtube.com");
     },
-    async  _getTimedTextUrl(url) {
-        let res = await fetch(url);
-        let html = await res.text();
-        let languages = html.split('https:\/\/www.youtube.com\/api\/timedtext');
-        for (let i = 0; i < languages.length; i++) {
-            if (languages[i].indexOf('lang=en') !== -1) {
-                let url = languages[i].split('","')[0];
-                if (url.length < 1000) {
-                    let json = '{"url":"https:\/\/www.youtube.com\/api\/timedtext' + url + '"}';
-                    return JSON.parse(json).url + '&lang=en&fmt=srv3&xorb=2&xobt=3&xovt=3';
-                }
-            }
-        }
-        return null;
+    async getSubtitles(caption_tracks, subtitleIdx=0) {
+        const text = await Utilities._downloadTimedText(caption_tracks, subtitleIdx);
+        return Utilities._parseTimedText(text);
     },
-    async  _downloadTimedText(url) {
-        let timedtextURL = await Utilities._getTimedTextUrl(url);
-
-        // console.log('timedtextUrl')
-        // console.log(timedtextURL)
+    async  _downloadTimedText(caption_tracks, subtitleIdx) {
+        let timedtextURL = await Utilities._getTimedTextUrl(caption_tracks, subtitleIdx);
 
         if (!timedtextURL) {
             return "";
@@ -84,9 +70,19 @@ window.Utilities = {
         }
         return text;
     },
-    async getSubtitles(url) {
-        const text = await Utilities._downloadTimedText(url);
-        return Utilities._parseTimedText(text);
+    async  _getTimedTextUrl(caption_tracks, subitleIdx) {   
+
+        // to get one word per line
+        return caption_tracks[subitleIdx].baseUrl + '&fmt=srv3&xorb=2&xobt=3&xovt=3'
+    },
+    async getCaptionTracks(url){
+        let res = await fetch(url);
+        let html = await res.text();
+
+        // HACK
+        let caption_tracks_json = html.split('captionTracks":')[1].split(']')[0] + ']'
+        let result = JSON.parse(caption_tracks_json)
+        return result
     },
     _parseTimedText(xml) {
         let xmlDocument = document.implementation.createHTMLDocument("");
@@ -112,3 +108,4 @@ window.Utilities = {
         return jsonTimedText;
     },
 };
+
