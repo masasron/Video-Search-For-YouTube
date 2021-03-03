@@ -109,22 +109,31 @@
     };
 
     function setup(url) {
-        if (!helpers.isVideoURL(url) || document.getElementById(state.IFRAME_ID)) {
+
+        if (!helpers.isVideoURL(url) ) {
             return;
         }
         
         state.YOUTUBE_PLAYER = document.querySelector("#container .html5-video-player");
         if (state.YOUTUBE_PLAYER) {
-            state.SEARCH_IFRAME = state.SEARCH_IFRAME || render.iframe();
+            state.SEARCH_IFRAME = render.iframe();
             state.SEARCH_IFRAME.src = browser.runtime.getURL('src/app/index.html') + '?url=' + encodeURIComponent(url);
-            state.YOUTUBE_PLAYER.appendChild(state.SEARCH_IFRAME);
 
-            state.YOUTUBE_PLAYER_SEARCH_BUTTON = render.searchButton();
-            state.YOUTUBE_RIGHT_CONTROLS = state.YOUTUBE_PLAYER.querySelector(".ytp-right-controls");
-            state.YOUTUBE_RIGHT_CONTROLS.insertBefore(state.YOUTUBE_PLAYER_SEARCH_BUTTON, state.YOUTUBE_RIGHT_CONTROLS.firstChild);
+            if (!document.getElementById(state.IFRAME_ID)){
+                state.YOUTUBE_PLAYER.appendChild(state.SEARCH_IFRAME);
+                addSearchButton()
+            } else {
+                document.getElementById(state.IFRAME_ID).replaceWith(state.SEARCH_IFRAME)
+            }
         } else {
             setTimeout(() => setup(window.location.href), 2000)
         }
+    }
+
+    function addSearchButton(){
+        state.YOUTUBE_PLAYER_SEARCH_BUTTON = render.searchButton();
+        state.YOUTUBE_RIGHT_CONTROLS = state.YOUTUBE_PLAYER.querySelector(".ytp-right-controls");
+        state.YOUTUBE_RIGHT_CONTROLS.insertBefore(state.YOUTUBE_PLAYER_SEARCH_BUTTON, state.YOUTUBE_RIGHT_CONTROLS.firstChild);
     }
 
     helpers.onUrlChange(setup);
