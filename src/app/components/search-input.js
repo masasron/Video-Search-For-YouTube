@@ -72,7 +72,7 @@ function SearchInput(props) {
         if (value.length === 0) {
             return;
         }
-
+        
         $refs.dropdown.appendChild(DropDownList({
             render: renderAutoCompleteItem,
             items: Utilities.searchSubtitles(value, props.SUBTITLES).slice(0, 8)
@@ -95,13 +95,14 @@ function SearchInput(props) {
     }
 
     return [
-        input({ onKeyUp: handleInput, ref: "search_input", spellcheck: "false", placeholder: "Search in video...", autocomplete: "off" }),
-        CloseButton({ onClick: handleCloseButtonClicked }),
-        div({ className: "autocomplate", ref: "dropdown" }),
         SubtitleSelect({
             items: props.CAPTION_TRACKS.map(x => x.name.simpleText),
             onChange: handleSubtitleOptionChanged,
             className: "subitle-select",
-        })
+            ref: "subtitleSelect",
+        }),
+        input({ onKeyUp: handleInput, ref: "search_input", spellcheck: "false", placeholder: "Search in video...", autocomplete: "off" }),
+        CloseButton({ onClick: handleCloseButtonClicked }),
+        div({ className: "autocomplate", ref: "dropdown" }),
     ];
 }
