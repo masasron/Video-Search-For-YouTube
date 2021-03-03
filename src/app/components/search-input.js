@@ -101,6 +101,7 @@ function SearchInput(props) {
         SubtitleSelect({
             items: props.CAPTION_TRACKS.map(x => x.name.simpleText),
             onChange: handleSubtitleOptionChanged,
+            className: "subitle-select",
         })
     ];
 }

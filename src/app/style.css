@@ -108,3 +108,7 @@ body {
     right: 15px;
     position: absolute;
 }
+
+.subitle-select {
+    width: 100%;
+}
