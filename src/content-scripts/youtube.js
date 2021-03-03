@@ -88,9 +88,6 @@
 				case 'SEARCH.UPDATE_HEIGHT':
 					state.SEARCH_IFRAME.style.height = data.payload;
 					break;
-				case 'SEARCH.UNSUPPORTED':
-					state.YOUTUBE_PLAYER_SEARCH_BUTTON.style.display = 'none';
-					break;
 				case 'SEARCH.READY':
 					state.YOUTUBE_PLAYER_SEARCH_BUTTON.style.display = 'inline';
 					break;
