@@ -56,22 +56,16 @@
 		},
 		byState() {
 			if (!state.SEARCH_BOX_VISIBILITY) {
-				if (state.SEARCH_IFRAME.style.display !== 'none') {
-					state.SEARCH_IFRAME.style.display = 'none';
-				}
-				return;
+                state.SEARCH_IFRAME.style.display = 'none';
+                return;
 			}
 			if (state.MOUSE_OVER_FRAME || !state.YOUTUBE_PLAYER) {
 				return;
 			}
 			if (state.YOUTUBE_PLAYER.classList.contains('ytp-autohide')) {
-				if (state.SEARCH_IFRAME.style.display !== 'none') {
-					state.SEARCH_IFRAME.style.display = 'none';
-				}
+                state.SEARCH_IFRAME.style.display = 'none';
 			} else {
-				if (state.SEARCH_IFRAME.style.display !== 'block') {
-					state.SEARCH_IFRAME.style.display = 'block';
-				}
+                state.SEARCH_IFRAME.style.display = 'block';
 			}
 		}
 	};
@@ -85,9 +79,6 @@
 
 			const data = event.data;
 			switch (data.action) {
-				case 'SEARCH.UPDATE_HEIGHT':
-					state.SEARCH_IFRAME.style.height = data.payload;
-					break;
 				case 'SEARCH.READY':
 					state.YOUTUBE_PLAYER_SEARCH_BUTTON.style.display = 'inline';
 					break;
@@ -98,6 +89,9 @@
 				case 'SKIP':
 					document.querySelector('video').currentTime = data.payload;
 					break;
+                case 'SEARCH.UPDATE_HEIGHT':
+                    state.SEARCH_IFRAME.style.height = data.payload;
+                    break;
 				default:
 					console.log('UNSUPPORTED ACTION', data);
 					break;
