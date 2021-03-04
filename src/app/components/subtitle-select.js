@@ -5,5 +5,7 @@ function SubtitleSelect(props){
         curOption.innerHTML = option
         result.appendChild(curOption)
     }
+    if(props.items.length == 1) result.disabled = true
+    
     return result
 }
