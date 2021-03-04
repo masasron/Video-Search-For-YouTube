@@ -101,8 +101,10 @@ function SearchInput(props) {
             className: "subitle-select",
             ref: "subtitleSelect",
         }),
-        input({ onKeyUp: handleInput, ref: "search_input", spellcheck: "false", placeholder: "Search in video...", autocomplete: "off" }),
-        CloseButton({ onClick: handleCloseButtonClicked }),
+        div({class: "relative", children : [
+            input({ onKeyUp: handleInput, ref: "search_input", spellcheck: "false", placeholder: "Search in video...", autocomplete: "off" }),
+            CloseButton({ onClick: handleCloseButtonClicked }),
+        ]}),
         div({ className: "autocomplate", ref: "dropdown" }),
     ];
 }
