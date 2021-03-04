@@ -17,7 +17,13 @@ window.addEventListener("load", async function () {
         }
     }, 1);
 
-    window.addEventListener("message", function () {
-        document.querySelector("input").focus();
+    window.addEventListener("message", function (message) {
+        if(message.data == 'FOCUS_INPUT'){
+            try {
+                document.querySelector("input").focus();
+            } catch(err) {
+                // dont show error when there are no subtitles and pressing hotkey
+            }
+        }
     });
 });

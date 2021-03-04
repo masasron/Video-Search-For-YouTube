@@ -46,26 +46,31 @@
 		searchButton() {
 			const button = render.baseButton();
 			button.innerHTML = state.SEARCH_SVG_HTML;
-			button.addEventListener('click', () => {
-				state.SEARCH_BOX_VISIBILITY = !state.SEARCH_BOX_VISIBILITY;
-				render.byState();
-				state.SEARCH_IFRAME.focus();
-				state.SEARCH_IFRAME.contentWindow.postMessage({}, '*');
-			});
+			button.id = 'subtitle-search-button';
+			button.addEventListener('click', render.toggleSearchInputVisibility)
 			return button;
 		},
 		byState() {
 			if (!state.SEARCH_BOX_VISIBILITY) {
-                state.SEARCH_IFRAME.style.display = 'none';
-                return;
+				state.SEARCH_IFRAME.style.display = 'none';
+				return;
 			}
 			if (state.MOUSE_OVER_FRAME || !state.YOUTUBE_PLAYER) {
 				return;
 			}
 			if (state.YOUTUBE_PLAYER.classList.contains('ytp-autohide')) {
-                state.SEARCH_IFRAME.style.display = 'none';
+				state.SEARCH_IFRAME.style.display = 'none';
 			} else {
-                state.SEARCH_IFRAME.style.display = 'block';
+				state.SEARCH_IFRAME.style.display = 'block';
+			}
+		},
+		toggleSearchInputVisibility() {
+			state.SEARCH_BOX_VISIBILITY = !state.SEARCH_BOX_VISIBILITY;
+			render.byState();
+			if (state.SEARCH_BOX_VISIBILITY) {
+				setTimeout(() => {
+					state.SEARCH_IFRAME.contentWindow.postMessage('FOCUS_INPUT', '*');
+				}, 100);
 			}
 		}
 	};
@@ -89,9 +94,9 @@
 				case 'SKIP':
 					document.querySelector('video').currentTime = data.payload;
 					break;
-                case 'SEARCH.UPDATE_HEIGHT':
-                    state.SEARCH_IFRAME.style.height = data.payload;
-                    break;
+				case 'SEARCH.UPDATE_HEIGHT':
+					state.SEARCH_IFRAME.style.height = data.payload;
+					break;
 				default:
 					console.log('UNSUPPORTED ACTION', data);
 					break;
@@ -112,6 +117,7 @@
 			setTimeout(() => setup(window.location.href), 2000);
 		}
 	}
+	
 	function addOrUpdateSearchInput(url) {
 		state.SEARCH_IFRAME = render.iframe();
 		state.SEARCH_IFRAME.src = browser.runtime.getURL('src/app/index.html') + '?url=' + encodeURIComponent(url);
@@ -124,18 +130,25 @@
 	}
 
 	function addOrUpdateSearchButton() {
-		if (state.YOUTUBE_PLAYER_SEARCH_BUTTON) {
-			state.YOUTUBE_PLAYER_SEARCH_BUTTON.remove();
-		}
 		state.YOUTUBE_PLAYER_SEARCH_BUTTON = render.searchButton();
-		state.YOUTUBE_RIGHT_CONTROLS = state.YOUTUBE_PLAYER.querySelector('.ytp-right-controls');
-		state.YOUTUBE_RIGHT_CONTROLS.insertBefore(
-			state.YOUTUBE_PLAYER_SEARCH_BUTTON,
-			state.YOUTUBE_RIGHT_CONTROLS.firstChild
-		);
+		if (!document.getElementById('subtitle-search-button')) {
+			state.YOUTUBE_RIGHT_CONTROLS = state.YOUTUBE_PLAYER.querySelector('.ytp-right-controls');
+			state.YOUTUBE_RIGHT_CONTROLS.insertBefore(
+				state.YOUTUBE_PLAYER_SEARCH_BUTTON,
+				state.YOUTUBE_RIGHT_CONTROLS.firstChild
+			);
+		} else {
+			document.getElementById('subtitle-search-button').replaceWith(state.YOUTUBE_PLAYER_SEARCH_BUTTON);
+		}
 	}
 
 	helpers.onUrlChange(setup);
 	setInterval(render.byState, 10);
 	window.addEventListener('message', logic.handleMessage);
+
+	browser.runtime.onMessage.addListener((data, sender) => {
+		if (data == 'toggle-search-input') {
+			render.toggleSearchInputVisibility();
+		}
+	});
 })();

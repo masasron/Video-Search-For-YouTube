@@ -18,5 +18,18 @@
       "gecko": {
         "id": "youtube_subtitle_search@foo"
       }
+   },
+   "background": {
+      "scripts": ["src/background.js"]
+   },
+   "commands": {
+      "toggle-search-input": {
+        "suggested_key": { "default": "Ctrl+Shift+F" },
+        "description": "Show search field"
+      }
+   },
+   "options_ui": {
+      "page": "src/options.html",
+      "browser_style": true
     }
 }
