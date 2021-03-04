@@ -23,6 +23,19 @@
 		},
 		isVideoURL(url) {
 			return url.indexOf(`https://${window.location.host}/watch`) === 0;
+		},
+		triggerEvent(el, type){
+			if ('createEvent' in document) {
+				 // modern browsers, IE9+
+				 var e = document.createEvent('HTMLEvents');
+				 e.initEvent(type, false, true);
+				 el.dispatchEvent(e);
+			 } else {
+				 // IE 8
+				 var e = document.createEventObject();
+				 e.eventType = type;
+				 el.fireEvent('on'+e.eventType, e);
+			 }
 		}
 	};
 
@@ -58,11 +71,7 @@
 			if (state.MOUSE_OVER_FRAME || !state.YOUTUBE_PLAYER) {
 				return;
 			}
-			if (state.YOUTUBE_PLAYER.classList.contains('ytp-autohide')) {
-				state.SEARCH_IFRAME.style.display = 'none';
-			} else {
-				state.SEARCH_IFRAME.style.display = 'block';
-			}
+			state.SEARCH_IFRAME.style.display = 'block';
 		},
 		toggleSearchInputVisibility() {
 			state.SEARCH_BOX_VISIBILITY = !state.SEARCH_BOX_VISIBILITY;
@@ -93,6 +102,10 @@
 					break;
 				case 'SKIP':
 					document.querySelector('video').currentTime = data.payload;
+					
+					// show timeline of video
+					let el = document.getElementById('movie_player')
+					helpers.triggerEvent(el, 'mousemove')
 					break;
 				case 'SEARCH.UPDATE_HEIGHT':
 					state.SEARCH_IFRAME.style.height = data.payload;
@@ -117,7 +130,7 @@
 			setTimeout(() => setup(window.location.href), 2000);
 		}
 	}
-	
+
 	function addOrUpdateSearchInput(url) {
 		state.SEARCH_IFRAME = render.iframe();
 		state.SEARCH_IFRAME.src = browser.runtime.getURL('src/app/index.html') + '?url=' + encodeURIComponent(url);
