@@ -120,6 +120,8 @@
 	};
 
 	function setup(url) {
+		state.SEARCH_BOX_VISIBILITY = false
+		
 		if (!helpers.isVideoURL(url)) {
 			return;
 		}
