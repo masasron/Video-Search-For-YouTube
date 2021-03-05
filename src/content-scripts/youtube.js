@@ -64,6 +64,8 @@
 			return button;
 		},
 		byState() {
+			if(!state.SEARCH_IFRAME) return
+
 			if (!state.SEARCH_BOX_VISIBILITY) {
 				state.SEARCH_IFRAME.style.display = 'none';
 				return;
@@ -86,7 +88,7 @@
 
 	const logic = {
 		handleMessage(event) {
-			let extension_url = browser.runtime.getURL('').slice(0, -1);
+			let extension_url = chrome.runtime.getURL('').slice(0, -1);
 			if (event.origin !== extension_url) {
 				return;
 			}
@@ -133,7 +135,7 @@
 
 	function addOrUpdateSearchInput(url) {
 		state.SEARCH_IFRAME = render.iframe();
-		state.SEARCH_IFRAME.src = browser.runtime.getURL('src/app/index.html') + '?url=' + encodeURIComponent(url);
+		state.SEARCH_IFRAME.src = chrome.runtime.getURL('src/app/index.html') + '?url=' + encodeURIComponent(url);
 
 		if (!document.getElementById(state.IFRAME_ID)) {
 			state.YOUTUBE_PLAYER.appendChild(state.SEARCH_IFRAME);
@@ -159,7 +161,7 @@
 	setInterval(render.byState, 10);
 	window.addEventListener('message', logic.handleMessage);
 
-	browser.runtime.onMessage.addListener((data, sender) => {
+	chrome.runtime.onMessage.addListener((data, sender) => {
 		if (data == 'toggle-search-input') {
 			render.toggleSearchInputVisibility();
 		}

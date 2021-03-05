@@ -4,19 +4,20 @@ const commandName = 'toggle-search-input';
  * Update the UI: set the value of the shortcut textbox.
  */
 async function updateUI() {
-  let commands = await browser.commands.getAll();
-  for (command of commands) {
-    if (command.name === commandName) {
-      document.querySelector('#shortcut').value = command.shortcut;
+  chrome.commands.getAll(commands => {
+    for (let command of commands) {
+      if (command.name === commandName) {
+        document.querySelector('#shortcut').value = command.shortcut;
+      }
     }
-  }
+  })
 }
 
 /**
  * Update the shortcut based on the value in the textbox.
  */
 async function updateShortcut() {
-  await browser.commands.update({
+  await chrome.commands.update({
     name: commandName,
     shortcut: document.querySelector('#shortcut').value
   });
@@ -26,7 +27,7 @@ async function updateShortcut() {
  * Reset the shortcut and update the textbox.
  */
 async function resetShortcut() {
-  await browser.commands.reset(commandName);
+  await chrome.commands.reset(commandName);
   updateUI();
 }
 
