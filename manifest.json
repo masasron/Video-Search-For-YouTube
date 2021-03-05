@@ -29,7 +29,7 @@
       }
    },
    "options_ui": {
-      "page": "src/options.html",
+      "page": "src/options-ui/options.html",
       "browser_style": true
    }
 }
