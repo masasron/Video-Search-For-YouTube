@@ -1,5 +1,5 @@
 # Search in subtitles on Youtube
-A browser extension that let's you search the subtitles of YouTube videos and jump to the moment they are shown. Imagine Ctrl+F, but for subtitles.
+A browser extension that let's you search the subtitles of YouTube videos and jump to the moment they are shown. It can be opened using a keyboard shortcut and lists automplete suggestions.
 
 Compatible with Firefox and Chrome.
 
