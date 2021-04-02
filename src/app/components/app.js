@@ -1,21 +1,12 @@
 async function App() {
-    const url = Utilities.getYouTubeURL();
+    const url = Utilities.getYouTubeURL()
 
-    if (!url) {
-        return;
-    }
+    if (!url) return
+    if((await Utilities.getCaptionTracks(url)).length ==  0) return
 
-    const CAPTION_TRACKS = await Utilities.getCaptionTracks(url)
-    if (CAPTION_TRACKS.length === 0) {
-        return;
-    }
+    var searchInput = SearchInput(url)
 
-    const SUBTITLES = await Utilities.getSubtitles(CAPTION_TRACKS);
-    if (SUBTITLES.length === 0) {
-        return;
-    }
+    Utilities.postMessage({ action: "SEARCH.READY" })
 
-    Utilities.postMessage({ action: "SEARCH.READY" });
-
-    return SearchInput({ SUBTITLES, CAPTION_TRACKS });
+    return searchInput
 }

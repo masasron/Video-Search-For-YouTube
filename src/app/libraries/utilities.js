@@ -50,12 +50,12 @@ window.Utilities = {
 	postMessage(message) {
 		window.parent.postMessage(message, 'https://www.youtube.com');
 	},
-	async getSubtitles(caption_tracks, subtitleIdx = 0) {
-		const text = await Utilities._downloadTimedText(caption_tracks, subtitleIdx);
+	async getSubtitles(caption_track) {
+		const text = await Utilities._downloadTimedText(caption_track);
 		return Utilities._parseTimedText(text);
 	},
-	async _downloadTimedText(caption_tracks, subtitleIdx) {
-		let timedtextURL = await Utilities._getTimedTextUrl(caption_tracks, subtitleIdx);
+	async _downloadTimedText(caption_track) {
+		let timedtextURL = await Utilities._getTimedTextUrl(caption_track);
 
 		if (!timedtextURL) {
 			return '';
@@ -68,32 +68,9 @@ window.Utilities = {
 		}
 		return text;
 	},
-	async _getTimedTextUrl(caption_tracks, subitleIdx) {
+	async _getTimedTextUrl(caption_track) {
 		// to get one word per line
-		return caption_tracks[subitleIdx].baseUrl + '&fmt=srv3&xorb=2&xobt=3&xovt=3';
-	},
-	async getCaptionTracks(url) {
-		let res = await fetch(url);
-		let html = await res.text();
-
-		if (html.indexOf('captionTracks') === -1) {
-			return [];
-		}
-
-		let startIdx = html.indexOf('captionTracks');
-		startIdx = html.indexOf('[', startIdx);
-
-		let curIdx = startIdx + 1;
-		let depth = 1;
-		while (depth != 0) {
-			let curChar = html[curIdx];
-			if (curChar == '[') depth += 1;
-			else if (curChar == ']') depth -= 1;
-			curIdx += 1;
-		}
-		let caption_tracks_json = html.substring(startIdx, curIdx);
-		let result = JSON.parse(caption_tracks_json);
-		return result;
+		return caption_track.baseUrl + '&fmt=srv3&xorb=2&xobt=3&xovt=3';
 	},
 	_parseTimedText(xml) {
 		let xmlDocument = document.implementation.createHTMLDocument('');
@@ -123,5 +100,28 @@ window.Utilities = {
 			});
 		});
 		return jsonTimedText;
+	},
+	async getCaptionTracks(url) {
+		let res = await fetch(url);
+		let html = await res.text();
+
+		if (html.indexOf('captionTracks') === -1) {
+			return [];
+		}
+
+		let startIdx = html.indexOf('captionTracks');
+		startIdx = html.indexOf('[', startIdx);
+
+		let curIdx = startIdx + 1;
+		let depth = 1;
+		while (depth != 0) {
+			let curChar = html[curIdx];
+			if (curChar == '[') depth += 1;
+			else if (curChar == ']') depth -= 1;
+			curIdx += 1;
+		}
+		let caption_tracks_json = html.substring(startIdx, curIdx);
+		let result = JSON.parse(caption_tracks_json);
+		return result;
 	}
 };

@@ -1,7 +1,17 @@
 
-function SearchInput(props) {
+async function SearchInput(url) {
 
-    let SUGGESTIONS_INDEX = -1;
+    let SUGGESTIONS_INDEX = -1
+
+    CAPTION_TRACKS = await Utilities.getCaptionTracks(url)
+    CUR_CAPTION_TRACK = null
+    SUBTITLES = []
+
+    r = await setTrackByName("English")
+    if(!r) r = await setTrackByName("English (United Kingdom)")
+    if(!r) r = await setTrackByName("English (auto-generated)")
+    if(!r) await setTrackByIdx(0)
+    
 
     function renderAutoCompleteItem(item) {
         return li({ onClick: () => handleAutoCompleteItemClick(item) }, [
@@ -75,19 +85,27 @@ function SearchInput(props) {
         
         $refs.dropdown.appendChild(DropDownList({
             render: renderAutoCompleteItem,
-            items: Utilities.searchSubtitles(value, props.SUBTITLES).slice(0, 8)
+            items: Utilities.searchSubtitles(value, SUBTITLES).slice(0, 8)
         }));
     }
 
-    function handleSubtitleOptionChanged(event) {       
-        new_value = event.target.value
-        let subtitleIdx = 0
-        for(let i=0; i<props.CAPTION_TRACKS.length; i++){
-            if(props.CAPTION_TRACKS[i].name.simpleText == new_value){
-                subtitleIdx = i
+    function handleTrackOptionChanged(event) {     
+        setTrackByName(event.target.value)
+    }
+
+    async function setTrackByName(name) {
+        for(let i=0; i<CAPTION_TRACKS.length; i++){
+            if(CAPTION_TRACKS[i].name.simpleText == name){
+                setTrackByIdx(i)
+                return true
             }
         }
-        Utilities.getSubtitles(props.CAPTION_TRACKS, subtitleIdx).then(d => props.SUBTITLES = d)
+        return false
+    }
+
+    async function setTrackByIdx(subtitleIdx) {
+        CUR_CAPTION_TRACK = CAPTION_TRACKS[subtitleIdx]
+        SUBTITLES = await Utilities.getSubtitles(CUR_CAPTION_TRACK)
     }
 
     function handleCloseButtonClicked() {
@@ -96,10 +114,11 @@ function SearchInput(props) {
 
     return [
         SubtitleSelect({
-            items: props.CAPTION_TRACKS.map(x => x.name.simpleText),
-            onChange: handleSubtitleOptionChanged,
+            items: CAPTION_TRACKS.map(x => x.name.simpleText),
+            onChange: handleTrackOptionChanged,
             className: "subitle-select",
             ref: "subtitleSelect",
+            value: CUR_CAPTION_TRACK.name.simpleText
         }),
         div({class: "relative", children : [
             input({ onKeyUp: handleInput, ref: "search_input", spellcheck: "false", placeholder: "Search in video...", autocomplete: "off" }),
