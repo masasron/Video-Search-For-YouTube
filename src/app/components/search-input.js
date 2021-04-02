@@ -9,6 +9,7 @@ async function SearchInput(url) {
 
     r = await setTrackByName("English")
     if(!r) r = await setTrackByName("English (United Kingdom)")
+    if(!r) r = await setTrackByName("English (United States)")
     if(!r) r = await setTrackByName("English (auto-generated)")
     if(!r) await setTrackByIdx(0)
     
