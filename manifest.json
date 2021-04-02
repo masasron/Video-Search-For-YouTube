@@ -12,7 +12,7 @@
    "manifest_version": 2,
    "name": "Search in subtitles on YouTube",
    "permissions": [ "*://*.youtube.com/*" ],
-   "version": "1.0.4.1",
+   "version": "1.0.4.2",
    "web_accessible_resources": [ "src/app/*", "src/app/libraries/*.js", "src/app/components/*.js" ],
    "browser_specific_settings": {
       "gecko": {
