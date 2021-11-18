@@ -12,7 +12,7 @@ window.Utilities = {
 	},
 	searchSubtitles(value, timedTextList) {
 		var results = [];
-		var words = value.toLowerCase().replace(/[^a-z0-9\s]/gim, '').trim().split(' ').filter((word) => word);
+		var words = value.toLowerCase().replace(/[^\p{Letter}0-9\s]/gimu, '').trim().split(' ').filter((word) => word);
 
 		if (words.length === 0) {
 			return [];
@@ -83,7 +83,7 @@ window.Utilities = {
 				.replace(/\n/gi, ' ')
 				.replace(/\[.*\]/gim, '')
 				.replace(/\(.*\)/gim, '')
-				.replace(/[^a-z0-9\s]/gim, '')
+				.replace(/[^\p{Letter}0-9\s]/gimu, '')
 				.trim();
 			if (!text) {
 				return;
